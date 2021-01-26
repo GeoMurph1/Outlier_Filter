@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov 16 17:07:56 2020
+Created on Tue Jan 26 06:56:32 2021
 
 @author: michaelmurphy
 """
@@ -35,13 +35,19 @@ class OutlierFilter(object):
         self.diff_array = np.diff(self.in_array, prepend=np.nan)
         return self.diff_array
 
-    
-        
-    def filter(self, threshold = 1):
+           
+    def interp_otlrs(self, threshold = 1):
         self.stdev = np.std(self.in_array)
         self.df_diff = pd.DataFrame(data={"d0":self.in_array, "diff0":self.calc_diff()})
         self.df_diff["d1"] = self.df_diff["d0"]
         self.df_diff.loc[self.df_diff["diff0"].abs() >= threshold*self.stdev, "d1"] = np.nan
         self.df_diff["d2"] = self.df_diff["d1"].interpolate()
+        return self.df_diff
+    
+    def nan_otlrs(self, threshold = 1):
+        self.stdev = np.std(self.in_array)
+        self.df_diff = pd.DataFrame(data={"d0":self.in_array, "diff0":self.calc_diff()})
+        self.df_diff["d1"] = self.df_diff["d0"]
+        self.df_diff.loc[self.df_diff["diff0"].abs() >= threshold*self.stdev, "d1"] = np.nan
         return self.df_diff
         
